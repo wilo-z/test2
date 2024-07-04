@@ -1535,7 +1535,7 @@ function multisections:toggle(props)
 	local def = props.def or props.Def or props.default or props.Default or props.toggle or props.Toggle or props.toggled or props.Toggled or false
 	local callback = props.callback or props.callBack or props.CallBack or props.Callback or function()end
 	-- // variables
-	local toggle = {}
+	local mssection_toggle = {}
 	-- // main
 	local toggleholder = utility.new(
 		"Frame",
@@ -1615,7 +1615,7 @@ function multisections:toggle(props)
 		}
 	)
 	-- // toggle tbl
-	toggle = {
+	mssection_toggle = {
 		["library"] = self.library,
 		["toggleholder"] = toggleholder,
 		["title"] = title,
@@ -1625,19 +1625,19 @@ function multisections:toggle(props)
 	}
 	--
 	button.MouseButton1Down:Connect(function()
-		if toggle.current then
-			toggle.callback(false)
-			toggle.color.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-			local find = table.find(self.library.themeitems["accent"]["BackgroundColor3"],toggle.color)
+		if mssection_toggle.current then
+			mssection_toggle.callback(false)
+			mssection_toggle.color.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+			local find = table.find(self.library.themeitems["accent"]["BackgroundColor3"],mssection_toggle.color)
 			if find then
 				table.remove(self.library.themeitems["accent"]["BackgroundColor3"],find)
 			end
-			toggle.current = false
+			mssection_toggle.current = false
 		else
-			toggle.callback(true)
-			toggle.color.BackgroundColor3 = self.library.theme.accent
-			table.insert(self.library.themeitems["accent"]["BackgroundColor3"],toggle.color)
-			toggle.current = true
+			mssection_toggle.callback(true)
+			mssection_toggle.color.BackgroundColor3 = self.library.theme.accent
+			table.insert(self.library.themeitems["accent"]["BackgroundColor3"],mssection_toggle.color)
+			mssection_toggle.current = true
 		end
 	end)
 	--
@@ -1645,14 +1645,14 @@ function multisections:toggle(props)
 	--
 	if pointer then
 		if self.pointers then
-			self.pointers[tostring(pointer)] = toggle
+			self.pointers[tostring(pointer)] = mssection
 		end
 	end
 	--
 	self.library.labels[#self.library.labels+1] = title
 	-- // metatable indexing + return
-	setmetatable(toggle, toggles)
-	return toggle
+	setmetatable(mssection_toggle, toggles)
+	return mssection_toggle
 end
 
 --
