@@ -1530,130 +1530,171 @@ end
 
 --
 function multisections:TEST(props)
-		-- // properties
-        local name = props.name or props.Name or props.page or props.Page or props.pagename or props.Pagename or props.PageName or props.pageName or "new ui"
-        local def = props.def or props.Def or props.default or props.Default or props.toggle or props.Toggle or props.toggled or props.Toggled or false
-        local callback = props.callback or props.callBack or props.CallBack or props.Callback or function()end
-        -- // variables
-        local toggle = {}
-        -- // main
-        local toggleholder = utility.new(
-            "Frame",
-            {
-                BackgroundTransparency = 1,
-                Size = UDim2.new(1,0,0,15),
-                Parent = self.content
-            }
-        )
-        --
-        local outline = utility.new(
-            "Frame",
-            {
-                BackgroundColor3 = Color3.fromRGB(24, 24, 24),
-                BorderColor3 = Color3.fromRGB(12, 12, 12),
-                BorderMode = "Inset",
-                BorderSizePixel = 1,
-                Size = UDim2.new(0,15,0,15),
-                Parent = toggleholder
-            }
-        )
-        --
-        local button = utility.new(
-            "TextButton",
-            {
-                AnchorPoint = Vector2.new(0,0),
-                BackgroundTransparency = 1,
-                Size = UDim2.new(1,0,1,0),
-                Position = UDim2.new(0,0,0,0),
-                Text = "",
-                Parent = toggleholder
-            }
-        )
-        --
-        local title = utility.new(
-            "TextLabel",
-            {
-                BackgroundTransparency = 1,
-                Size = UDim2.new(1,-20,1,0),
-                Position = UDim2.new(0,20,0,0),
-                Font = self.library.font,
-                Text = name,
-                TextColor3 = Color3.fromRGB(255,255,255),
-                TextSize = self.library.textsize,
-                TextStrokeTransparency = 0,
-                TextXAlignment = "Left",
-                Parent = toggleholder
-            }
-        )
-        --
-        local col = Color3.fromRGB(20, 20, 20)
-        if def then
-            col = self.library.theme.accent
-        end
-        --
-        local color = utility.new(
-            "Frame",
-            {
-                BackgroundColor3 = col,
-                BorderColor3 = Color3.fromRGB(56, 56, 56),
-                BorderMode = "Inset",
-                BorderSizePixel = 1,
-                Size = UDim2.new(1,0,1,0),
-                Parent = outline
-            }
-        )
-        if def then
-            table.insert(self.library.themeitems["accent"]["BackgroundColor3"],color)
-        end
-        --
-        utility.new(
-            "UIGradient",
-            {
-                Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(199, 191, 204)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))},
-                Rotation = 90,
-                Parent = color
-            }
-        )
-        -- // toggle tbl
-        toggle = {
-            ["library"] = self.library,
-            ["toggleholder"] = toggleholder,
-            ["title"] = title,
-            ["color"] = color,
-            ["callback"] = callback,
-            ["current"] = def
-        }
-        --
-        button.MouseButton1Down:Connect(function()
-            if toggle.current then
-                toggle.callback(false)
-                toggle.color.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-                local find = table.find(self.library.themeitems["accent"]["BackgroundColor3"],toggle.color)
-                if find then
-                    table.remove(self.library.themeitems["accent"]["BackgroundColor3"],find)
-                end
-                toggle.current = false
-            else
-                toggle.callback(true)
-                toggle.color.BackgroundColor3 = self.library.theme.accent
-                table.insert(self.library.themeitems["accent"]["BackgroundColor3"],toggle.color)
-                toggle.current = true
-            end
-        end)
-        --
-        local pointer = props.pointer or props.Pointer or props.pointername or props.Pointername or props.PointerName or props.pointerName or nil
-        --
-        if pointer then
-            if self.pointers then
-                self.pointers[tostring(pointer)] = toggle
-            end
-        end
-        --
-        self.library.labels[#self.library.labels+1] = title
-        -- // metatable indexing + return
-        setmetatable(toggle, toggles)
-        return toggle
+	local name = props.name or props.Name or props.page or props.Page or props.pagename or props.Pagename or props.PageName or props.pageName or "new ui"
+	-- // variables
+	local mssection = {}
+	-- // main
+	local tabbutton = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+			BorderColor3 = Color3.fromRGB(12, 12, 12),
+			BorderMode = "Inset",
+			BorderSizePixel = 1,
+			Size = UDim2.new(0,60,0,20),
+			Parent = self.buttons
+		}
+	)
+	--
+	local outline = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+			BorderColor3 = Color3.fromRGB(56, 56, 56),
+			BorderMode = "Inset",
+			BorderSizePixel = 1,
+			Size = UDim2.new(1,0,1,0),
+			Position = UDim2.new(0,0,0,0),
+			Parent = tabbutton
+		}
+	)
+	--
+	local button = utility.new(
+		"TextButton",
+		{
+			AnchorPoint = Vector2.new(0,0),
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1,0,1,0),
+			Position = UDim2.new(0,0,0,0),
+			Text = "",
+			Parent = tabbutton
+		}
+	)
+	--
+	local r_line = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(56, 56, 56),
+			BorderSizePixel = 0,
+			Size = UDim2.new(0,1,0,1),
+			Position = UDim2.new(1,0,1,1),
+			ZIndex = 2,
+			Parent = outline
+		}
+	)
+	--
+	local l_line = utility.new(
+		"Frame",
+		{
+			AnchorPoint = Vector2.new(1,0),
+			BackgroundColor3 = Color3.fromRGB(56, 56, 56),
+			BorderSizePixel = 0,
+			Size = UDim2.new(0,1,0,1),
+			Position = UDim2.new(0,0,1,1),
+			ZIndex = 2,
+			Parent = outline
+		}
+	)
+	--
+	local line = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+			BorderSizePixel = 0,
+			Size = UDim2.new(1,0,0,2),
+			Position = UDim2.new(0,0,1,0),
+			ZIndex = 2,
+			Parent = outline
+		}
+	)
+	--
+	local label = utility.new(
+		"TextLabel",
+		{
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1,0,0,20),
+			Position = UDim2.new(0,0,0,0),
+			Font = self.library.font,
+			Text = name,
+			TextColor3 = Color3.fromRGB(255,255,255),
+			TextSize = self.library.textsize,
+			TextStrokeTransparency = 0,
+			Parent = outline
+		}
+	)
+	--
+	local content = utility.new(
+		"Frame",
+		{
+			AnchorPoint = Vector2.new(0.5,1),
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			Size = UDim2.new(1,-6,1,-27),
+			Position = UDim2.new(0.5,0,1,-3),
+			Parent = self.tabs_outline
+		}
+	)
+	--
+	utility.new(
+		"UIListLayout",
+		{
+			FillDirection = "Vertical",
+			Padding = UDim.new(0,5),
+			Parent = content
+		}
+	)
+	-- // mssection tbl
+	mssection = {
+		["library"] = self.library,
+		["outline"] = outline,
+		["r_line"] = r_line,
+		["l_line"] = l_line,
+		["line"] = line,
+		["content"] = content,
+		["open"] = false,
+		["pointers"] = {}
+	}
+	--
+	table.insert(self.mssections,mssection)
+	--
+	button.MouseButton1Down:Connect(function()
+		if mssection.open == false then
+			for i,v in pairs(self.mssections) do
+				if v ~= mssection then
+					if v.open then
+						v.page.Visible = false
+						v.open = false
+						v.outline.BackgroundColor3 = Color3.fromRGB(31, 31 ,31)
+						v.line.Size = UDim2.new(1,0,0,2)
+						v.line.BackgroundColor3 = Color3.fromRGB(31, 31 ,31)
+					end
+				end
+			end
+			--
+			mssection.library:closewindows()
+			--
+			mssection.content.Visible = true
+			mssection.open = true
+			mssection.outline.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+			mssection.line.Size = UDim2.new(1,0,0,3)
+			mssection.line.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+		end
+	end)
+	--
+	local pointer = props.pointer or props.Pointer or props.pointername or props.Pointername or props.PointerName or props.pointerName or nil
+	--
+	if pointer then
+		if self.pointers then
+			self.pointers[tostring(pointer)] = mssection.pointers
+		end
+	end
+	--
+	self.library.labels[#self.library.labels+1] = label
+	-- // metatable indexing + return
+	setmetatable(mssection,mssections)
+	return mssection
 end
+
 
 --
 function sections:toggle(props)
