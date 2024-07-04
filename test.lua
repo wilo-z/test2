@@ -4,7 +4,6 @@ local pages = {}
 local sections = {}
 local multisections = {}
 local mssections = {}
-local mssections_sections = {}
 local toggles = {}
 local buttons = {}
 local sliders = {}
@@ -36,7 +35,6 @@ pages.__index = pages
 sections.__index = sections
 multisections.__index = multisections
 mssections.__index = mssections
-mssections_sections.__index = mssections_sections
 toggles.__index = toggles
 buttons.__index = buttons
 sliders.__index = sliders
@@ -1527,134 +1525,6 @@ function multisections:section(props)
 	setmetatable(mssection,mssections)
 	return mssection
 end
-
---
-function multisections:toggle(props)
-	-- // properties
-	local name = props.name or props.Name or props.page or props.Page or props.pagename or props.Pagename or props.PageName or props.pageName or "new ui"
-	local def = props.def or props.Def or props.default or props.Default or props.toggle or props.Toggle or props.toggled or props.Toggled or false
-	local callback = props.callback or props.callBack or props.CallBack or props.Callback or function()end
-	-- // variables
-	local mssection_toggle = {}
-	-- // main
-	local toggleholder = utility.new(
-		"Frame",
-		{
-			BackgroundTransparency = 1,
-			Size = UDim2.new(1,0,0,15),
-			Parent = self.content
-		}
-	)
-	--
-	local outline = utility.new(
-		"Frame",
-		{
-			BackgroundColor3 = Color3.fromRGB(24, 24, 24),
-			BorderColor3 = Color3.fromRGB(12, 12, 12),
-			BorderMode = "Inset",
-			BorderSizePixel = 1,
-			Size = UDim2.new(0,15,0,15),
-			Parent = toggleholder
-		}
-	)
-	--
-	local button = utility.new(
-		"TextButton",
-		{
-			AnchorPoint = Vector2.new(0,0),
-			BackgroundTransparency = 1,
-			Size = UDim2.new(1,0,1,0),
-			Position = UDim2.new(0,0,0,0),
-			Text = "",
-			Parent = toggleholder
-		}
-	)
-	--
-	local title = utility.new(
-		"TextLabel",
-		{
-			BackgroundTransparency = 1,
-			Size = UDim2.new(1,-20,1,0),
-			Position = UDim2.new(0,20,0,0),
-			Font = self.library.font,
-			Text = name,
-			TextColor3 = Color3.fromRGB(255,255,255),
-			TextSize = self.library.textsize,
-			TextStrokeTransparency = 0,
-			TextXAlignment = "Left",
-			Parent = toggleholder
-		}
-	)
-	--
-	local col = Color3.fromRGB(20, 20, 20)
-	if def then
-		col = self.library.theme.accent
-	end
-	--
-	local color = utility.new(
-		"Frame",
-		{
-			BackgroundColor3 = col,
-			BorderColor3 = Color3.fromRGB(56, 56, 56),
-			BorderMode = "Inset",
-			BorderSizePixel = 1,
-			Size = UDim2.new(1,0,1,0),
-			Parent = outline
-		}
-	)
-	if def then
-		table.insert(self.library.themeitems["accent"]["BackgroundColor3"],color)
-	end
-	--
-	utility.new(
-		"UIGradient",
-		{
-			Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(199, 191, 204)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))},
-			Rotation = 90,
-			Parent = color
-		}
-	)
-	-- // toggle tbl
-	mssection_toggle = {
-		["library"] = self.library,
-		["toggleholder"] = toggleholder,
-		["title"] = title,
-		["color"] = color,
-		["callback"] = callback,
-		["current"] = def
-	}
-	--
-	button.MouseButton1Down:Connect(function()
-		if mssection_toggle.current then
-			mssection_toggle.callback(false)
-			mssection_toggle.color.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-			local find = table.find(self.library.themeitems["accent"]["BackgroundColor3"],mssection_toggle.color)
-			if find then
-				table.remove(self.library.themeitems["accent"]["BackgroundColor3"],find)
-			end
-			mssection_toggle.current = false
-		else
-			mssection_toggle.callback(true)
-			mssection_toggle.color.BackgroundColor3 = self.library.theme.accent
-			table.insert(self.library.themeitems["accent"]["BackgroundColor3"],mssection_toggle.color)
-			mssection_toggle.current = true
-		end
-	end)
-	--
-	local pointer = props.pointer or props.Pointer or props.pointername or props.Pointername or props.PointerName or props.pointerName or nil
-	--
-	if pointer then
-		if self.pointers then
-			self.pointers[tostring(pointer)] = mssection
-		end
-	end
-	--
-	self.library.labels[#self.library.labels+1] = title
-	-- // metatable indexing + return
-	setmetatable(mssection_toggle, toggles)
-	return mssection_toggle
-end
-
 --
 function sections:toggle(props)
 	-- // properties
