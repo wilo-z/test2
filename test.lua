@@ -1529,33 +1529,66 @@ function multisections:section(props)
 end
 
 --
-function multisections:TEST(props)
+function mssections_sections:textbox(props)
+    -- // properties
 	local name = props.name or props.Name or props.page or props.Page or props.pagename or props.Pagename or props.PageName or props.pageName or "new ui"
+	local def = props.def or props.Def or props.default or props.Default or ""
+	local placeholder = props.placeholder or props.Placeholder or props.placeHolder or props.PlaceHolder or props.placeholdertext or props.PlaceHolderText or props.PlaceHoldertext or props.placeHolderText or props.placeHoldertext or props.Placeholdertext or props.PlaceholderText or props.placeholderText or ""
+	local callback = props.callback or props.callBack or props.CallBack or props.Callback or function()end
 	-- // variables
-	local mssection = {}
+	local textbox = {}
 	-- // main
-	local tabbutton = utility.new(
+	local textboxholder = utility.new(
 		"Frame",
 		{
-			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
-			BorderColor3 = Color3.fromRGB(12, 12, 12),
-			BorderMode = "Inset",
-			BorderSizePixel = 1,
-			Size = UDim2.new(0,60,0,20),
-			Parent = self.buttons
+			BackgroundTransparency = 1,
+			Size = UDim2.new(1,0,0,35),
+			ZIndex = 2,
+			Parent = self.content
 		}
 	)
 	--
 	local outline = utility.new(
 		"Frame",
 		{
-			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
+			BackgroundColor3 = Color3.fromRGB(24, 24, 24),
+			BorderColor3 = Color3.fromRGB(12, 12, 12),
+			BorderMode = "Inset",
+			BorderSizePixel = 1,
+			Size = UDim2.new(1,0,0,20),
+			Position = UDim2.new(0,0,0,15),
+			Parent = textboxholder
+		}
+	)
+	--
+	local outline2 = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(24, 24, 24),
 			BorderColor3 = Color3.fromRGB(56, 56, 56),
 			BorderMode = "Inset",
 			BorderSizePixel = 1,
 			Size = UDim2.new(1,0,1,0),
-			Position = UDim2.new(0,0,0,0),
-			Parent = tabbutton
+			Parent = outline
+		}
+	)
+	--
+	local color = utility.new(
+		"Frame",
+		{
+			BackgroundColor3 = Color3.fromRGB(30, 30, 30),
+			BorderSizePixel = 0,
+			Size = UDim2.new(1,0,1,0),
+			Parent = outline2
+		}
+	)
+	--
+	local gradient = utility.new(
+		"UIGradient",
+		{
+			Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(199, 191, 204)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))},
+			Rotation = 90,
+			Parent = color
 		}
 	)
 	--
@@ -1567,117 +1600,71 @@ function multisections:TEST(props)
 			Size = UDim2.new(1,0,1,0),
 			Position = UDim2.new(0,0,0,0),
 			Text = "",
-			Parent = tabbutton
+			TextColor3 = Color3.fromRGB(255,255,255),
+			TextSize = self.library.textsize,
+			TextStrokeTransparency = 0,
+			Font = self.library.font,
+			Parent = textboxholder
 		}
 	)
 	--
-	local r_line = utility.new(
-		"Frame",
-		{
-			BackgroundColor3 = Color3.fromRGB(56, 56, 56),
-			BorderSizePixel = 0,
-			Size = UDim2.new(0,1,0,1),
-			Position = UDim2.new(1,0,1,1),
-			ZIndex = 2,
-			Parent = outline
-		}
-	)
-	--
-	local l_line = utility.new(
-		"Frame",
-		{
-			AnchorPoint = Vector2.new(1,0),
-			BackgroundColor3 = Color3.fromRGB(56, 56, 56),
-			BorderSizePixel = 0,
-			Size = UDim2.new(0,1,0,1),
-			Position = UDim2.new(0,0,1,1),
-			ZIndex = 2,
-			Parent = outline
-		}
-	)
-	--
-	local line = utility.new(
-		"Frame",
-		{
-			BackgroundColor3 = Color3.fromRGB(20, 20, 20),
-			BorderSizePixel = 0,
-			Size = UDim2.new(1,0,0,2),
-			Position = UDim2.new(0,0,1,0),
-			ZIndex = 2,
-			Parent = outline
-		}
-	)
-	--
-	local label = utility.new(
+	local title = utility.new(
 		"TextLabel",
 		{
 			BackgroundTransparency = 1,
-			Size = UDim2.new(1,0,0,20),
+			Size = UDim2.new(1,0,0,15),
 			Position = UDim2.new(0,0,0,0),
 			Font = self.library.font,
 			Text = name,
 			TextColor3 = Color3.fromRGB(255,255,255),
 			TextSize = self.library.textsize,
 			TextStrokeTransparency = 0,
-			Parent = outline
+			TextXAlignment = "Left",
+			Parent = textboxholder
 		}
 	)
 	--
-	local content = utility.new(
-		"Frame",
+	local tbox = utility.new(
+		"TextBox",
 		{
-			AnchorPoint = Vector2.new(0.5,1),
+			AnchorPoint = Vector2.new(0.5,0),
 			BackgroundTransparency = 1,
-			BorderSizePixel = 0,
-			Size = UDim2.new(1,-6,1,-27),
-			Position = UDim2.new(0.5,0,1,-3),
-			Parent = self.tabs_outline
+			Size = UDim2.new(1,-10,0,20),
+			Position = UDim2.new(0.5,0,0,15),
+			PlaceholderText = placeholder,
+			Text = def,
+			TextColor3 = Color3.fromRGB(255,255,255),
+			TextSize = self.library.textsize,
+			TextStrokeTransparency = 0,
+			TextTruncate = "AtEnd",
+			Font = self.library.font,
+			Parent = textboxholder
 		}
 	)
-	--
-	utility.new(
-		"UIListLayout",
-		{
-			FillDirection = "Vertical",
-			Padding = UDim.new(0,5),
-			Parent = content
-		}
-	)
-	-- // mssection tbl
-	mssection = {
+	-- // textbox tbl
+	textbox = {
 		["library"] = self.library,
-		["outline"] = outline,
-		["r_line"] = r_line,
-		["l_line"] = l_line,
-		["line"] = line,
-		["content"] = content,
-		["open"] = false,
-		["pointers"] = {}
+		["tbox"] = tbox,
+		["current"] = def,
+		["callback"] = callback
 	}
 	--
-	table.insert(self.mssections,mssection)
-	--
 	button.MouseButton1Down:Connect(function()
-		if mssection.open == false then
-			for i,v in pairs(self.mssections) do
-				if v ~= mssection then
-					if v.open then
-						v.page.Visible = false
-						v.open = false
-						v.outline.BackgroundColor3 = Color3.fromRGB(31, 31 ,31)
-						v.line.Size = UDim2.new(1,0,0,2)
-						v.line.BackgroundColor3 = Color3.fromRGB(31, 31 ,31)
-					end
-				end
-			end
-			--
-			mssection.library:closewindows()
-			--
-			mssection.content.Visible = true
-			mssection.open = true
-			mssection.outline.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
-			mssection.line.Size = UDim2.new(1,0,0,3)
-			mssection.line.BackgroundColor3 = Color3.fromRGB(24, 24, 24)
+		tbox:CaptureFocus()
+	end)
+	--
+	tbox.Focused:Connect(function()
+		outline.BorderColor3 = self.library.theme.accent
+		table.insert(self.library.themeitems["accent"]["BorderColor3"],outline)
+	end)
+	--
+	tbox.FocusLost:Connect(function(enterPressed)
+		textbox.current = tbox.Text
+		callback(tbox.Text)
+		outline.BorderColor3 = Color3.fromRGB(12, 12, 12)
+		local find = table.find(self.library.themeitems["accent"]["BorderColor3"],outline)
+		if find then
+			table.remove(self.library.themeitems["accent"]["BorderColor3"],find)
 		end
 	end)
 	--
@@ -1685,14 +1672,15 @@ function multisections:TEST(props)
 	--
 	if pointer then
 		if self.pointers then
-			self.pointers[tostring(pointer)] = mssection.pointers
+			self.pointers[tostring(pointer)] = textbox
 		end
 	end
 	--
-	self.library.labels[#self.library.labels+1] = label
+	self.library.labels[#self.library.labels+1] = title
+	self.library.labels[#self.library.labels+1] = tbox
 	-- // metatable indexing + return
-	setmetatable(mssection,mssections)
-	return mssection
+	setmetatable(textbox, textboxs)
+	return textbox
 end
 
 
